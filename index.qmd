@@ -1,0 +1,78 @@
+---
+title: "Analysis of ruler RT data"
+date: 2023-10-10
+---
+
+## Purpose
+
+This page summarizes our analysis and visualization of the reaction time data collected by Andrea Seisler in May 2023 from students at Our Lady of Victory Middle School.
+
+```{r set-up}
+library(tidyverse)
+```
+
+## Description of task
+
+## Gathering
+
+The data are in a Google sheet that is accessible to the psubrainlab account.
+
+Here is a link to the data:
+
+<https://docs.google.com/spreadsheets/d/1J-S5-kKQpHYW7L1_pqxX57zziS5IPX7ViA2MG3pGFBo/edit#gid=621964648>
+
+First, I need to authenticate to Google.
+
+```{r}
+googledrive::drive_auth(email="psubrainlab@gmail.com")
+```
+
+Then, I download the data.
+
+```{r}
+googledrive::drive_download(
+  file = "https://docs.google.com/spreadsheets/d/1J-S5-kKQpHYW7L1_pqxX57zziS5IPX7ViA2MG3pGFBo/edit?usp=sharing",
+  path = "csv/rt-raw.csv",
+  type = 'csv',
+  overwrite = TRUE
+)
+```
+
+Now, I reimport the CSV file as a data frame/tibble.
+
+```{r}
+rt <- readr::read_csv("csv/rt-raw.csv")
+str(rt)
+```
+
+## Cleaning
+
+Let's drop columns we don't need or won't use.
+
+```{r}
+rt <- rt |>
+  dplyr::select(-Timestamp) |>
+  dplyr::rename(
+    "class" = "Class Period",
+    "part_id" = "Participant ID (4 digits e.g. 7000, 7001)",
+    "trial" = "Trial Number",
+    "gender" = "Male or Female",
+    "hand" = "Hand: Left (L) or Right (R)",
+    "dom_nondom" = "Hand: D for (Dominant - the one you write with) OR N (Non-Dominant)",
+    "cm" = "Distance (cm OR drop)",
+    "age_range" = "age-range"
+  ) |>
+  dplyr::mutate(cm = as.numeric(cm))
+```
+
+## Visualization
+
+```{r}
+library(ggplot2)
+rt |>
+  ggplot() +
+  aes(x = cm, fill = hand) +
+  geom_histogram() +
+  facet_grid(cols = vars(gender))
+```
+
