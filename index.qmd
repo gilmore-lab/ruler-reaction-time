@@ -68,11 +68,39 @@ rt <- rt |>
 ## Visualization
 
 ```{r}
-library(ggplot2)
 rt |>
   ggplot() +
   aes(x = cm, fill = hand) +
   geom_histogram() +
-  facet_grid(cols = vars(gender))
+  facet_grid(rows = vars(gender), cols = vars(dom_nondom))
+```
+
+```{r}
+rt |>
+  ggplot() +
+  aes(x = dom_nondom, y = cm, fill = hand) +
+  geom_violin() +
+  facet_grid(rows = vars(gender))
+```
+
+```{r}
+rt |>
+  ggplot() +
+  aes(x = dom_nondom, y = cm, fill = hand) +
+  geom_boxplot() +
+  facet_grid(rows = vars(gender))
+```
+
+```{r}
+rt <- rt |>
+  dplyr::mutate(student = paste0(class, "-", part_id))
+
+rt |>
+  ggplot() +
+  aes(x = trial, y = cm, group = student, color = as.factor(student)) +
+  geom_line() +
+  facet_grid(rows = vars(class)) +
+  scale_x_continuous(breaks = c(1:8)) +
+  theme(legend.position = "none")
 ```
 
