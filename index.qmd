@@ -97,10 +97,17 @@ rt <- rt |>
 
 rt |>
   ggplot() +
-  aes(x = trial, y = cm, group = student, color = as.factor(student)) +
+  aes(x = trial, y = cm, group = as.factor(part_id), color = as.factor(part_id)) +
   geom_line() +
   facet_grid(rows = vars(class)) +
   scale_x_continuous(breaks = c(1:8)) +
   theme(legend.position = "none")
+```
+```{r}
+rt |>
+  ggplot() +
+  aes(x = class, y = cm) +
+  geom_boxplot() +
+  geom_point()
 ```
 
